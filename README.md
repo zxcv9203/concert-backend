@@ -5,3 +5,6 @@
 
 ## 시퀀스 다이어그램
 [시퀀스 다이어그램 링크](./docs/SequenceDiagram.md)
+
+## ERD
+[ERD 링크](./docs/erd.md)
