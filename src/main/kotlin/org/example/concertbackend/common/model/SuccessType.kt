@@ -13,5 +13,6 @@ enum class SuccessType(
     CONCERT_SEAT_FOUND(HttpStatus.OK.value().toString(), "콘서트 좌석 조회에 성공했습니다."),
     CONCERT_SEAT_RESERVED(HttpStatus.OK.value().toString(), "콘서트 좌석 예약에 성공했습니다."),
 
-    WALLET_CHARGED(HttpStatus.OK.value().toString(), "잔액 충전에 성공했습니다."),
+    BALANCE_CHARGED(HttpStatus.OK.value().toString(), "잔액 충전에 성공했습니다."),
+    BALANCE_FOUND(HttpStatus.OK.value().toString(), "잔액 조회에 성공했습니다."),
 }

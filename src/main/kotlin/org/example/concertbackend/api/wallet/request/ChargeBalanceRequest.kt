@@ -1,5 +1,5 @@
 package org.example.concertbackend.api.wallet.request
 
-data class ChargeWalletRequest(
+data class ChargeBalanceRequest(
     val amount: Long,
 )

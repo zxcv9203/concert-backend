@@ -317,7 +317,7 @@
 
 ## 잔액 조회 API
 
-`GET /v1/users/{id}/wallets/{id}`
+`GET /v1/users/{id}/wallet`
 
 ### 요청 헤더
 
