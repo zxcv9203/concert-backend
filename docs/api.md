@@ -92,17 +92,17 @@
     "schedules": [
       {
         "id": 1,
-        "date": "2024-10-10",
+        "date": "2024-10-10 13:00",
         "availableSeats": 10
       },
       {
         "id": 2,
-        "date": "2024-10-11",
+        "date": "2024-10-11 13:00",
         "availableSeats": 5
       },
       {
         "id": 3,
-        "date": "2022-10-12",
+        "date": "2022-10-12 13:00",
         "availableSeats": 0
       }
     ]
