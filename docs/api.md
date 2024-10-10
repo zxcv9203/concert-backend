@@ -267,7 +267,7 @@
 
 ## 잔액 충전 API
 
-`POST /v1/users/{userId}/wallets/{walletId}/charge`
+`PATCH /v1/users/{userId}/wallet/charge`
 
 ### 요청 헤더
 
