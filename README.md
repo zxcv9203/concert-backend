@@ -8,3 +8,7 @@
 
 ## ERD
 [ERD 링크](./docs/erd.md)
+
+## API 명세 정리
+
+[API 명세 링크](./docs/api.md)
