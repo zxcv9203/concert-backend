@@ -12,3 +12,6 @@
 ## API 명세 정리
 
 [API 명세 링크](./docs/api.md)
+
+## 아키텍처
+[아키텍처 링크](./docs/architecture.md)
