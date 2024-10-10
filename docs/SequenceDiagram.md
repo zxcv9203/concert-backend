@@ -9,59 +9,56 @@
 ### 토큰 발급 API
 ```mermaid
 sequenceDiagram
-autonumber
-actor user as 사용자
-participant server as 서버
-participant queue as 대기열
-participant db as 데이터베이스
-
-user ->> server : 토큰 발급 요청
-server ->> db : 사용자 정보 조회
-db ->> server : 사용자 정보 반환
-alt 사용자 정보가 없는 경우
-server ->> user : 400 에러 반환
-end
-server ->> queue : 현재 대기열 상태 조회
-queue ->> server : 결과 반환
-server ->> server : 대기열 토큰 발급
-server ->> db : 대기열 토큰 저장
-db ->> server : 결과 반환
-server ->> user : 대기열 토큰 반환
+    autonumber
+    actor user as 사용자
+    participant server as 서버
+    participant queue as 대기열
+    participant db as 데이터베이스
+    user ->> server: 토큰 발급 요청
+    server ->> db: 사용자 정보 조회
+    db ->> server: 사용자 정보 반환
+    alt 사용자 정보가 없는 경우
+        server ->> user: 400 에러 반환
+    end
+    server ->> server: 대기열 토큰 발급
+    server ->> queue: 대기열 등록
+    queue ->> server: 결과 반환
+    server ->> db: 대기열 토큰 저장
+    db ->> server: 결과 반환
+    server ->> user: 대기열 토큰 반환
 ```
 ### 대기열 상태 확인 API (폴링)
 ```mermaid
 sequenceDiagram
-autonumber
-actor user as 사용자
-participant server as 서버
-participant queue as 대기열
-participant db as 데이터베이스
-
-user ->> server : 대기열 상태 확인
-server ->> db : 토큰 정보 조회
-db ->> server : 토큰 정보 반환
-alt 토큰 정보가 없는 경우
-server ->> user : 400 에러 반환
-end
-server ->> db : 토큰 만료 시간 갱신
-db ->> server : 결과 반환
-server ->> queue : 대기열 상태 조회
-queue ->> server : 대기열 결과 반환
-server ->> user : 토큰 대기열 상태 반환
+  autonumber
+  actor user as 사용자
+  participant server as 서버
+  participant queue as 대기열
+  participant db as 데이터베이스
+  user ->> server: 대기열 상태 확인
+  server ->> db: 토큰 정보 조회
+  db ->> server: 토큰 정보 반환
+  alt 토큰 정보가 없는 경우
+    server ->> user: 400 에러 반환
+  end
+  server ->> db: 토큰 만료 시간 갱신
+  db ->> server: 결과 반환
+  server ->> queue: 대기열 상태 조회
+  queue ->> server: 대기열 결과 반환
+  server ->> user: 토큰 대기열 상태 반환
 ```
 
 ### 대기열 토큰 만료 / 진입 처리 스케쥴러
 ```mermaid
 sequenceDiagram
-autonumber
-participant scheduler as 스케쥴러
-participant queue as 대기열
-
-scheduler ->> queue : 시간 만료된 참가 상태의 토큰 만료 처리
-scheduler ->> queue : 시간 만료된 대기열 토큰 만료 처리
-scheduler ->> queue : 대기열 토큰 상위 N개 리스트 조회
-queue ->> scheduler : 대기열 토큰 리스트 반환
-scheduler ->> queue : 대기열 토큰 상위 N개 리스트 추가
+  autonumber
+  participant scheduler as 스케쥴러
+  participant queue as 대기열
+  scheduler ->> queue: 시간 만료된 참가 상태의 토큰 만료 처리
+  scheduler ->> queue: 시간 만료된 대기열 토큰 만료 처리
+  scheduler ->> queue: 대기열 토큰 상위 N개 리스트 조회
+  queue ->> scheduler: 대기열 토큰 리스트 반환
+  scheduler ->> queue: 대기열 토큰 상위 N개 리스트 추가
 ```
 ## 예약 가능 날짜 / 좌석 API 구현
 - 요구사항
@@ -80,7 +77,7 @@ sequenceDiagram
   user ->> server: 예약 가능 날짜 조회
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
@@ -106,7 +103,7 @@ sequenceDiagram
   user ->> server: 예약 가능 날짜 조회
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
@@ -135,7 +132,7 @@ sequenceDiagram
   user ->> server: 좌석 예약 요청
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
@@ -173,7 +170,7 @@ sequenceDiagram
   user ->> server: 잔액 충전 요청
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
@@ -204,7 +201,7 @@ sequenceDiagram
   user ->> server: 잔액 충전 요청
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
@@ -235,7 +232,7 @@ sequenceDiagram
   user ->> server: 좌석 결제 요청
   server ->> queue: 대기열에 존재하는 토큰인지 조회
   queue ->> server: 결과 반환
-  server ->> server : 예약 가능 상태인지 확인
+  server ->> server: 예약 가능 상태인지 확인
   alt 예약 가능 상태가 아닌 경우
     server ->> user: 400 에러 반환
   end
