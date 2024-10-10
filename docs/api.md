@@ -210,13 +210,7 @@
 
 ```json
 {
-  "seats": [
-    1,
-    2,
-    3,
-    4
-  ],
-  "userId": 1
+  "seats": [1, 2, 3, 4]
 }
 ```
 
@@ -225,36 +219,10 @@
 ```json
 {
   "code": "200",
-  "message": "좌석 예약에 성공했습니다.",
+  "message": "콘서트 좌석 예약에 성공했습니다.",
   "data": {
     "id": 1,
-    "totalPrice": 40000,
-    "seats": [
-      {
-        "id": 1,
-        "seatNumber": "A1",
-        "status": "IN_PROGRESS",
-        "price": 10000
-      },
-      {
-        "id": 2,
-        "seatNumber": "A2",
-        "status": "IN_PROGRESS",
-        "price": 10000
-      },
-      {
-        "id": 3,
-        "seatNumber": "A3",
-        "status": "IN_PROGRESS",
-        "price": 10000
-      },
-      {
-        "id": 4,
-        "seatNumber": "A4",
-        "status": "IN_PROGRESS",
-        "price": 10000
-      }
-    ]
+    "totalPrice": 40000
   }
 }
 ```
