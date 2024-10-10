@@ -15,4 +15,6 @@ enum class SuccessType(
 
     BALANCE_CHARGED(HttpStatus.OK.value().toString(), "잔액 충전에 성공했습니다."),
     BALANCE_FOUND(HttpStatus.OK.value().toString(), "잔액 조회에 성공했습니다."),
+
+    PAYMENT_SUCCESS(HttpStatus.OK.value().toString(), "결제에 성공했습니다."),
 }
