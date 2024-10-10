@@ -2,6 +2,8 @@ package org.example.concertbackend.api.concert
 
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponse
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
+import org.example.concertbackend.api.concert.response.ConcertSeatResponse
+import org.example.concertbackend.api.concert.response.ConcertSeatResponses
 import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
@@ -43,8 +45,47 @@ class ConcertController {
             .status(HttpStatus.OK)
             .body(
                 ApiResponse.success(
-                    SuccessType.QUEUE_REGISTERED,
+                    SuccessType.CONCERT_SCHEDULE_FOUND,
                     ConcertScheduleResponses(concertSchedules),
+                ),
+            )
+    }
+
+    @GetMapping("/{concertId}/schedules/{scheduleId}/seats")
+    fun findConcertSeats(
+        @PathVariable concertId: Long,
+        @PathVariable scheduleId: Long,
+        @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
+    ): ResponseEntity<ApiResponse<ConcertSeatResponses>> {
+        val seats =
+            ConcertSeatResponses(
+                listOf(
+                    ConcertSeatResponse(
+                        id = 1,
+                        seatNumber = "A1",
+                        status = "AVAILABLE",
+                        price = 100000,
+                    ),
+                    ConcertSeatResponse(
+                        id = 2,
+                        seatNumber = "B2",
+                        status = "IN_PROGRESS",
+                        price = 10000,
+                    ),
+                    ConcertSeatResponse(
+                        id = 3,
+                        seatNumber = "C3",
+                        status = "RESERVED",
+                        price = 1000,
+                    ),
+                ),
+            )
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(
+                ApiResponse.success(
+                    SuccessType.CONCERT_SEAT_FOUND,
+                    seats,
                 ),
             )
     }
