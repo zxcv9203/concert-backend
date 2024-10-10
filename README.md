@@ -15,3 +15,6 @@
 
 ## 아키텍처
 [아키텍처 링크](./docs/architecture.md)
+
+## 기술 스택
+[기술 스택 링크](./docs/techstack.md)
