@@ -1,8 +1,8 @@
-package org.example.concertbackend.api
+package org.example.concertbackend.api.queue
 
-import org.example.concertbackend.api.request.RegisterQueueRequest
-import org.example.concertbackend.api.response.RegisterQueueResponse
-import org.example.concertbackend.api.response.TokenPositionQueueResponse
+import org.example.concertbackend.api.queue.request.RegisterQueueRequest
+import org.example.concertbackend.api.queue.response.RegisterQueueResponse
+import org.example.concertbackend.api.queue.response.TokenPositionQueueResponse
 import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
