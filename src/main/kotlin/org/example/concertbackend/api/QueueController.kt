@@ -2,12 +2,15 @@ package org.example.concertbackend.api
 
 import org.example.concertbackend.api.request.RegisterQueueRequest
 import org.example.concertbackend.api.response.RegisterQueueResponse
+import org.example.concertbackend.api.response.TokenPositionQueueResponse
 import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
@@ -29,4 +32,21 @@ class QueueController {
                 ),
             ),
         )
+
+    @GetMapping
+    fun findQueuePosition(
+        @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
+    ): ResponseEntity<ApiResponse<TokenPositionQueueResponse>> =
+        ResponseEntity
+            .status(HttpStatus.OK)
+            .body(
+                ApiResponse.success(
+                    SuccessType.QUEUE_POSITION_FOUND,
+                    TokenPositionQueueResponse(
+                        token = token,
+                        status = "WAITING",
+                        waitingNumber = 1,
+                    ),
+                ),
+            )
 }
