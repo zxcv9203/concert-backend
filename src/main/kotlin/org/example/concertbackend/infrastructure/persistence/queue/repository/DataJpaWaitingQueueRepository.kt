@@ -15,4 +15,6 @@ interface DataJpaWaitingQueueRepository : JpaRepository<WaitingQueueJpaEntity, L
         """,
     )
     fun findAllByStatus(status: QueueStatus): List<WaitingQueueJpaEntity>
+
+    fun findByToken(token: String): WaitingQueueJpaEntity?
 }

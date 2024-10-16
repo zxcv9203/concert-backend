@@ -25,4 +25,10 @@ class JpaWaitingQueueRepository(
             .takeIf { it >= 0 }
             ?.inc()
             ?: throw BusinessException(ErrorType.WAITING_QUEUE_TOKEN_NOT_FOUND)
+
+    override fun findByToken(token: String): WaitingQueue? {
+        return dataJpaWaitingQueueRepository
+            .findByToken(token)
+            ?.toDomain()
+    }
 }
