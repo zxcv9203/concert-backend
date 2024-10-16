@@ -4,4 +4,6 @@ interface WaitingQueueManager {
     fun addToQueue(queue: WaitingQueue): WaitingQueue
 
     fun findPosition(queueToken: String): Int
+
+    fun findByToken(token: String): WaitingQueue?
 }

@@ -8,7 +8,6 @@ import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,8 +28,7 @@ class WaitingQueueController(
             ),
         )
 
-    @GetMapping
-    fun findQueuePosition(
+    override fun findQueuePosition(
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
     ): ResponseEntity<ApiResponse<TokenPositionQueueResponse>> =
         ResponseEntity
@@ -38,11 +36,7 @@ class WaitingQueueController(
             .body(
                 ApiResponse.success(
                     SuccessType.QUEUE_POSITION_FOUND,
-                    TokenPositionQueueResponse(
-                        token = token,
-                        status = "WAITING",
-                        waitingNumber = 1,
-                    ),
+                    waitingQueueUseCase.findQueuePosition(token),
                 ),
             )
 }

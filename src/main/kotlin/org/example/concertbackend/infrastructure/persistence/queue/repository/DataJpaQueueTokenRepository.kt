@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface DataJpaQueueTokenRepository : JpaRepository<QueueTokenJpaEntity, Long> {
     fun findByUserId(userId: Long): QueueTokenJpaEntity?
+
+    fun findByToken(token: String): QueueTokenJpaEntity?
 }

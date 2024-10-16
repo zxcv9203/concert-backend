@@ -15,9 +15,14 @@ class JpaQueueTokenRepository(
             .save(queueToken.toJpaEntity())
             .toDomain()
 
-    override fun findByUserIdOrNull(userId: Long): QueueToken? {
-        return dataJpaQueueTokenRepository
+    override fun findByUserId(userId: Long): QueueToken? =
+        dataJpaQueueTokenRepository
             .findByUserId(userId)
+            ?.toDomain()
+
+    override fun findByToken(token: String): QueueToken? {
+        return dataJpaQueueTokenRepository
+            .findByToken(token)
             ?.toDomain()
     }
 }

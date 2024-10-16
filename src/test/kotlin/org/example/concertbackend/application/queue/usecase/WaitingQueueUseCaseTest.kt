@@ -10,6 +10,7 @@ import org.example.concertbackend.api.queue.response.RegisterQueueResponse
 import org.example.concertbackend.application.queue.service.QueueTokenCommandService
 import org.example.concertbackend.application.queue.service.QueueTokenQueryService
 import org.example.concertbackend.application.queue.service.WaitingQueueCommandService
+import org.example.concertbackend.application.queue.service.WaitingQueueQueryService
 import org.example.concertbackend.application.user.service.UserQueryService
 import org.example.concertbackend.domain.queue.QueueToken
 import org.example.concertbackend.domain.queue.WaitingQueue
@@ -36,6 +37,9 @@ class WaitingQueueUseCaseTest {
     @MockK
     private lateinit var queueTokenQueryService: QueueTokenQueryService
 
+    @MockK
+    private lateinit var waitingQueueQueryService: WaitingQueueQueryService
+
     @Nested
     @DisplayName("대기열 큐 등록")
     inner class AddToQueue {
@@ -49,7 +53,7 @@ class WaitingQueueUseCaseTest {
         @DisplayName("대기열에 이미 등록된 유저인 경우 대기열에 등록하지 않고 등록된 토큰을 반환한다.")
         fun addToQueueWhenQueueTokenExists() {
             every { userQueryService.findById(request.userId) } returns user
-            every { queueTokenQueryService.findByUserIdOrNull(request.userId) } returns waitingQueueInToken
+            every { queueTokenQueryService.findByUserId(request.userId) } returns waitingQueueInToken
 
             val got = waitingQueueUseCase.addToQueue(request)
 
@@ -61,7 +65,7 @@ class WaitingQueueUseCaseTest {
         fun addToQueueWhenQueueTokenNotExists() {
             val registerToken = WaitingQueue(token)
             every { userQueryService.findById(request.userId) } returns user
-            every { queueTokenQueryService.findByUserIdOrNull(request.userId) } returns null
+            every { queueTokenQueryService.findByUserId(request.userId) } returns null
             every { queueTokenCommandService.create(request.userId) } returns waitingQueueInToken
             every { waitingQueueCommandService.addToQueue(token) } returns registerToken
 
