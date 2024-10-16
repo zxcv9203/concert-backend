@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.example.concertbackend.domain.queue.QueueStatus
 import org.example.concertbackend.infrastructure.persistence.model.BaseTimeEntity
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "waiting_queue")
@@ -16,6 +17,7 @@ class WaitingQueueJpaEntity(
     val token: String,
     @Enumerated(EnumType.STRING)
     val status: QueueStatus,
+    val expiresAt: LocalDateTime?,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

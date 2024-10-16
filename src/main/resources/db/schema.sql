@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS `queue_tokens`
     `id`         BIGINT AUTO_INCREMENT PRIMARY KEY,
     `user_id`    BIGINT       NOT NULL COMMENT '사용자 ID',
     `token`      VARCHAR(255) NOT NULL UNIQUE COMMENT '토큰(UUID)',
-    `expires_at` DATETIME     NULL COMMENT '활성 후 만료 시간',
     `created_at` DATETIME     NOT NULL COMMENT '생성 시간',
     `updated_at` DATETIME     NOT NULL COMMENT '수정 시간'
 );
@@ -76,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `waiting_queue`
     `id`         BIGINT AUTO_INCREMENT PRIMARY KEY,
     `token`      VARCHAR(255) NOT NULL UNIQUE COMMENT '토큰(UUID)',
     `status`     VARCHAR(30)  NOT NULL COMMENT '대기 상태',
+    `expires_at` DATETIME     NULL COMMENT '활성 후 만료 시간',
     `created_at` DATETIME     NOT NULL COMMENT '생성 시간',
     `updated_at` DATETIME     NOT NULL COMMENT '수정 시간'
 );
