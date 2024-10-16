@@ -30,8 +30,8 @@ class JpaWaitingQueueRepositoryTest {
 
         private val data =
             listOf(
-                WaitingQueueJpaEntity(token = token, status = QueueStatus.WAITING),
-                WaitingQueueJpaEntity(token = "test", status = QueueStatus.WAITING),
+                WaitingQueueJpaEntity(token = token, status = QueueStatus.WAITING, expiresAt = null),
+                WaitingQueueJpaEntity(token = "test", status = QueueStatus.WAITING, expiresAt = null),
             )
 
         @Test
