@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -50,14 +49,18 @@ class ConcertController(
                 ),
             )
 
-    @PostMapping("/{concertId}/schedules/{scheduleId}/seats/reservations")
-    fun reserveConcertSeats(
+    override fun reserveConcertSeats(
         @PathVariable concertId: Long,
         @PathVariable scheduleId: Long,
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
         @RequestBody request: ReservationConcertSeatRequest,
     ): ResponseEntity<ApiResponse<ReservationConcertSeatResponse>> =
         ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(SuccessType.CONCERT_SEAT_RESERVED, ReservationConcertSeatResponse(1, 10000)))
+            .status(HttpStatus.OK)
+            .body(
+                ApiResponse.success(
+                    SuccessType.CONCERT_SEAT_RESERVED,
+                    concertUseCase.reserveSeats(concertId, scheduleId, token, request),
+                ),
+            )
 }

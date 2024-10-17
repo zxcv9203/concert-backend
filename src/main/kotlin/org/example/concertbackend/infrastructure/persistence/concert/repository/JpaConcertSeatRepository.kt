@@ -4,6 +4,8 @@ import org.example.concertbackend.domain.concert.ConcertSeat
 import org.example.concertbackend.domain.concert.ConcertSeatRepository
 import org.example.concertbackend.domain.concert.ConcertSeatStatus
 import org.example.concertbackend.infrastructure.persistence.concert.mapper.toDomain
+import org.example.concertbackend.infrastructure.persistence.concert.mapper.toJpaEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -20,4 +22,23 @@ class JpaConcertSeatRepository(
         dataJpaConcertSeatRepository
             .findAllByConcertScheduleId(scheduleId)
             .map { it.toDomain() }
+
+    override fun findByScheduleIdAndIdsWithLock(
+        scheduleId: Long,
+        seatIds: List<Long>,
+    ): List<ConcertSeat> =
+        dataJpaConcertSeatRepository
+            .findAllByConcertScheduleIdAndIdInAndStatus(scheduleId, seatIds, ConcertSeatStatus.AVAILABLE)
+            .map { it.toDomain() }
+
+    override fun update(seat: ConcertSeat): ConcertSeat =
+        dataJpaConcertSeatRepository
+            .save(seat.toJpaEntity())
+            .toDomain()
+
+    override fun findById(seatId: Long): ConcertSeat? {
+        return dataJpaConcertSeatRepository
+            .findByIdOrNull(seatId)
+            ?.toDomain()
+    }
 }
