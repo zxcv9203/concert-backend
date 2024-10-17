@@ -2,6 +2,7 @@ package org.example.concertbackend.infrastructure.persistence.concert.reservatio
 
 import org.example.concertbackend.domain.concert.reservation.ConcertReservation
 import org.example.concertbackend.domain.concert.reservation.ConcertReservationRepository
+import org.example.concertbackend.domain.concert.reservation.ConcertReservationStatus
 import org.example.concertbackend.infrastructure.persistence.concert.reservation.mapper.toDomain
 import org.example.concertbackend.infrastructure.persistence.concert.reservation.mapper.toJpaEntity
 import org.springframework.stereotype.Repository
@@ -18,7 +19,7 @@ class JpaConcertReservationRepository(
 
     override fun findExpiredReservations(now: LocalDateTime): List<ConcertReservation> =
         dataJpaConcertReservationRepository
-            .findAllByExpiresAtBefore(now)
+            .findAllByExpiresAtBeforeAndStatus(now, ConcertReservationStatus.PENDING)
             .map { it.toDomain() }
 
     override fun update(it: ConcertReservation): ConcertReservation =
