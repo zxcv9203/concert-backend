@@ -56,4 +56,20 @@ class JpaWaitingQueueRepositoryTest {
                 .hasMessage(ErrorType.WAITING_QUEUE_TOKEN_NOT_FOUND.message)
         }
     }
+
+    @Nested
+    @DisplayName("활성화된 대기열 토큰인지 검증")
+    inner class CheckActiveToken {
+        @Test
+        @DisplayName("전달한 토큰이 활성 상태가 아닌 경우 예외를 발생시킵니다.")
+        fun checkActiveToken() {
+            val token = "token"
+
+            every { dataJpaWaitingQueueRepository.findByTokenAndStatus(token, QueueStatus.ACTIVE) } returns null
+
+            assertThatThrownBy { jpaWaitingQueueRepository.checkActiveToken(token) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.NOT_ACTIVE_TOKEN.message)
+        }
+    }
 }

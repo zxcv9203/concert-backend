@@ -1,11 +1,11 @@
 package org.example.concertbackend.api.concert
 
 import org.example.concertbackend.api.concert.request.ReservationConcertSeatRequest
-import org.example.concertbackend.api.concert.response.ConcertScheduleResponse
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
 import org.example.concertbackend.api.concert.response.ConcertSeatResponse
 import org.example.concertbackend.api.concert.response.ConcertSeatResponses
 import org.example.concertbackend.api.concert.response.ReservationConcertSeatResponse
+import org.example.concertbackend.application.concert.usecase.ConcertUseCase
 import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
@@ -17,43 +17,24 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/v1/concerts")
-class ConcertController {
-    @GetMapping("/{id}/schedules")
-    fun findConcertSchedules(
-        @PathVariable id: Long,
+class ConcertController(
+    private val concertUseCase: ConcertUseCase,
+) : ConcertApi {
+    override fun findConcertSchedules(
+        @PathVariable concertId: Long,
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
-    ): ResponseEntity<ApiResponse<ConcertScheduleResponses>> {
-        val concertSchedules =
-            listOf(
-                ConcertScheduleResponse(
-                    id = id,
-                    date = LocalDateTime.of(2024, 10, 10, 13, 0),
-                    availableSeats = 10,
-                ),
-                ConcertScheduleResponse(
-                    id = id,
-                    date = LocalDateTime.of(2024, 10, 11, 13, 0),
-                    availableSeats = 5,
-                ),
-                ConcertScheduleResponse(
-                    id = id,
-                    date = LocalDateTime.of(2024, 10, 12, 13, 0),
-                    availableSeats = 0,
-                ),
-            )
-        return ResponseEntity
+    ): ResponseEntity<ApiResponse<ConcertScheduleResponses>> =
+        ResponseEntity
             .status(HttpStatus.OK)
             .body(
                 ApiResponse.success(
                     SuccessType.CONCERT_SCHEDULE_FOUND,
-                    ConcertScheduleResponses(concertSchedules),
+                    concertUseCase.findSchedules(concertId, token),
                 ),
             )
-    }
 
     @GetMapping("/{concertId}/schedules/{scheduleId}/seats")
     fun findConcertSeats(
