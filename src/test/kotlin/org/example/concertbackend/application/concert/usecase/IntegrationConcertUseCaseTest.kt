@@ -54,63 +54,64 @@ class IntegrationConcertUseCaseTest {
     @Autowired
     private lateinit var databaseCleanUp: DatabaseCleanUp
 
-    @AfterEach
+    private val concertDate1 = LocalDateTime.now().plusDays(1)
+    private val concertDate2 = LocalDateTime.now().plusDays(2)
+    private lateinit var concert: ConcertJpaEntity
+
+    @BeforeEach
     fun setUp() {
+        val user = dataJpaUserRepository.save(UserJpaEntity("user"))
+        val queueToken = dataJpaQueueTokenRepository.save(QueueTokenJpaEntity(userId = user.id, token = "token"))
+        dataJpaWaitingQueueRepository.save(
+            WaitingQueueJpaEntity(
+                queueToken.token,
+                status = QueueStatus.ACTIVE,
+                expiresAt = concertDate1,
+            ),
+        )
+        concert = dataJpaConcertRepository.save(ConcertJpaEntity("concert"))
+        val concertSchedules =
+            dataJpaConcertScheduleRepository.saveAll(
+                listOf(
+                    ConcertScheduleJpaEntity(
+                        concertId = concert.id,
+                        startTime = concertDate1,
+                        endTime = concertDate1.plusHours(2),
+                    ),
+                    ConcertScheduleJpaEntity(
+                        concertId = concert.id,
+                        startTime = concertDate2,
+                        endTime = concertDate2.plusHours(2),
+                    ),
+                ),
+            )
+        dataJpaConcertSeatRepository.saveAll(
+            concertSchedules.flatMap { schedule ->
+                (1..50).map {
+                    ConcertSeatJpaEntity(
+                        concertScheduleId = schedule.id,
+                        name = "A1",
+                        price = 10000,
+                    )
+                }
+            },
+        )
+    }
+
+    @AfterEach
+    fun tearDown() {
         databaseCleanUp.execute()
     }
 
     @Nested
     @DisplayName("콘서트 일정 조회")
     inner class FindSchedules {
-        private val concertDate1 = LocalDateTime.now().plusDays(1)
-        private val concertDate2 = LocalDateTime.now().plusDays(2)
-        private lateinit var concert: ConcertJpaEntity
 
-        @BeforeEach
-        fun setUp() {
-            val user = dataJpaUserRepository.save(UserJpaEntity("user"))
-            val queueToken = dataJpaQueueTokenRepository.save(QueueTokenJpaEntity(userId = user.id, token = "token"))
-            dataJpaWaitingQueueRepository.save(
-                WaitingQueueJpaEntity(
-                    queueToken.token,
-                    status = QueueStatus.ACTIVE,
-                    expiresAt = concertDate1,
-                ),
-            )
-            concert = dataJpaConcertRepository.save(ConcertJpaEntity("concert"))
-            val concertSchedules =
-                dataJpaConcertScheduleRepository.saveAll(
-                    listOf(
-                        ConcertScheduleJpaEntity(
-                            concertId = concert.id,
-                            startTime = concertDate1,
-                            endTime = concertDate1.plusHours(2),
-                        ),
-                        ConcertScheduleJpaEntity(
-                            concertId = concert.id,
-                            startTime = concertDate2,
-                            endTime = concertDate2.plusHours(2),
-                        ),
-                    ),
-                )
-            dataJpaConcertSeatRepository.saveAll(
-                concertSchedules.flatMap { schedule ->
-                    (1..50).map {
-                        ConcertSeatJpaEntity(
-                            concertScheduleId = schedule.id,
-                            name = "A1",
-                            price = 10000,
-                        )
-                    }
-                },
-            )
-        }
 
         @Test
         @DisplayName("콘서트 ID를 전달하면 해당 콘서트의 일정을 반환한다.")
         fun findSchedules() {
-            println(concert.id)
-            val concertId = concert.id
+            val concertId = 1L
 
             val got = concertUseCase.findSchedules(concertId, "token")
 
@@ -139,4 +140,62 @@ class IntegrationConcertUseCaseTest {
                 .hasMessage(ErrorType.CONCERT_NOT_FOUND.message)
         }
     }
+
+    @Nested
+    @DisplayName("콘서트 좌석 조회")
+    inner class FindSeats {
+        @Test
+        @DisplayName("해당하는 일자의 콘서트 좌석을 조회한다.")
+        fun findSeats() {
+            val concertId = 1L
+            val concertScheduleId = 1L
+            val ids = (1L..50L).toList()
+            val token = "token"
+
+            val got = concertUseCase.findSeats(concertId, concertScheduleId, token)
+
+            assertThat(got.seats)
+                .extracting("id")
+                .containsExactlyElementsOf(ids)
+        }
+
+        @Test
+        @DisplayName("전달된 대기열 토큰이 유효하지 않으면 예외를 던진다.")
+        fun invalidToken() {
+            val concertId = 1L
+            val concertScheduleId = 1L
+            val invalidToken = "invalidToken"
+
+            assertThatThrownBy { concertUseCase.findSeats(concertId, concertScheduleId, invalidToken) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.NOT_ACTIVE_TOKEN.message)
+        }
+
+        @Test
+        @DisplayName("전달된 콘서트 ID가 존재하지 않으면 예외를 던진다.")
+        fun notFoundConcert() {
+            val concertId = 9999L
+            val concertScheduleId = 1L
+            val token = "token"
+
+            assertThatThrownBy { concertUseCase.findSeats(concertId, concertScheduleId, token) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.CONCERT_NOT_FOUND.message)
+        }
+
+        @Test
+        @DisplayName("전달된 콘서트 스케줄 ID가 존재하지 않으면 예외를 던진다.")
+        fun notFoundConcertSchedule() {
+            val concertId = 1L
+            val concertScheduleId = 9999L
+            val token = "token"
+
+            assertThatThrownBy { concertUseCase.findSeats(concertId, concertScheduleId, token) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.CONCERT_SCHEDULE_NOT_FOUND.message)
+        }
+
+    }
+
+
 }
