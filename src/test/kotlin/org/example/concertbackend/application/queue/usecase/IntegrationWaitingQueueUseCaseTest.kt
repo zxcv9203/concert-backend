@@ -95,4 +95,40 @@ class IntegrationWaitingQueueUseCaseTest {
                 .hasMessage(ErrorType.USER_NOT_FOUND.message)
         }
     }
+
+    @Nested
+    @DisplayName("대기열 조회")
+    inner class FindQueuePosition {
+        private lateinit var user: UserJpaEntity
+        private lateinit var queueToken: QueueTokenJpaEntity
+
+        @BeforeEach
+        fun setUp() {
+            user = dataJpaUserRepository.save(UserJpaEntity("user"))
+            queueToken = dataJpaQueueTokenRepository.save(QueueTokenJpaEntity(userId = user.id, token = "token"))
+            dataJpaWaitingQueueRepository.save(
+                WaitingQueueJpaEntity(
+                    queueToken.token,
+                    status = QueueStatus.WAITING,
+                    expiresAt = null,
+                ),
+            )
+        }
+
+        @Test
+        @DisplayName("토큰을 이용하여 대기열 위치를 조회한다.")
+        fun findQueuePosition() {
+            val got = waitingQueueUseCase.findQueuePosition(queueToken.token)
+
+            assertThat(got.waitingNumber).isEqualTo(1)
+        }
+
+        @Test
+        @DisplayName("토큰이 없는 경우 예외를 발생시킨다.")
+        fun tokenNotFound() {
+            assertThatThrownBy { waitingQueueUseCase.findQueuePosition("not-exist") }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.WAITING_QUEUE_TOKEN_NOT_FOUND.message)
+        }
+    }
 }
