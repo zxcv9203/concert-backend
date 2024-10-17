@@ -13,4 +13,12 @@ class JpaConcertScheduleRepository(
         dataJpaConcertScheduleRepository
             .findAllByConcertId(concertId)
             .map { it.toDomain() }
+
+    override fun findByConcertIdAndId(
+        concertId: Long,
+        scheduleId: Long,
+    ): ConcertSchedule? =
+        dataJpaConcertScheduleRepository
+            .findByConcertIdAndId(concertId, scheduleId)
+            ?.toDomain()
 }

@@ -2,7 +2,6 @@ package org.example.concertbackend.api.concert
 
 import org.example.concertbackend.api.concert.request.ReservationConcertSeatRequest
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
-import org.example.concertbackend.api.concert.response.ConcertSeatResponse
 import org.example.concertbackend.api.concert.response.ConcertSeatResponses
 import org.example.concertbackend.api.concert.response.ReservationConcertSeatResponse
 import org.example.concertbackend.application.concert.usecase.ConcertUseCase
@@ -37,43 +36,19 @@ class ConcertController(
             )
 
     @GetMapping("/{concertId}/schedules/{scheduleId}/seats")
-    fun findConcertSeats(
+    override fun findConcertSeats(
         @PathVariable concertId: Long,
         @PathVariable scheduleId: Long,
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
-    ): ResponseEntity<ApiResponse<ConcertSeatResponses>> {
-        val seats =
-            ConcertSeatResponses(
-                listOf(
-                    ConcertSeatResponse(
-                        id = 1,
-                        seatNumber = "A1",
-                        status = "AVAILABLE",
-                        price = 100000,
-                    ),
-                    ConcertSeatResponse(
-                        id = 2,
-                        seatNumber = "B2",
-                        status = "IN_PROGRESS",
-                        price = 10000,
-                    ),
-                    ConcertSeatResponse(
-                        id = 3,
-                        seatNumber = "C3",
-                        status = "RESERVED",
-                        price = 1000,
-                    ),
-                ),
-            )
-        return ResponseEntity
+    ): ResponseEntity<ApiResponse<ConcertSeatResponses>> =
+        ResponseEntity
             .status(HttpStatus.OK)
             .body(
                 ApiResponse.success(
                     SuccessType.CONCERT_SEAT_FOUND,
-                    seats,
+                    concertUseCase.findSeats(concertId, scheduleId, token),
                 ),
             )
-    }
 
     @PostMapping("/{concertId}/schedules/{scheduleId}/seats/reservations")
     fun reserveConcertSeats(

@@ -3,6 +3,7 @@ package org.example.concertbackend.api.concert
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
+import org.example.concertbackend.api.concert.response.ConcertSeatResponses
 import org.example.concertbackend.common.model.ApiResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,4 +21,15 @@ interface ConcertApi {
         @PathVariable concertId: Long,
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
     ): ResponseEntity<ApiResponse<ConcertScheduleResponses>>
+
+    @Operation(
+        summary = "콘서트 좌석 조회",
+        description = "콘서트 일정의 좌석을 조회합니다.",
+    )
+    @GetMapping("/{concertId}/schedules/{scheduleId}/seats")
+    fun findConcertSeats(
+        @PathVariable concertId: Long,
+        @PathVariable scheduleId: Long,
+        @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
+    ): ResponseEntity<ApiResponse<ConcertSeatResponses>>
 }
