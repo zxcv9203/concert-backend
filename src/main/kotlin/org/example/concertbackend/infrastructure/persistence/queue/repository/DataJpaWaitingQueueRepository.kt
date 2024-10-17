@@ -1,5 +1,6 @@
 package org.example.concertbackend.infrastructure.persistence.queue.repository
 
+import jdk.jshell.Snippet.Status
 import org.example.concertbackend.domain.queue.QueueStatus
 import org.example.concertbackend.infrastructure.persistence.queue.entity.WaitingQueueJpaEntity
 import org.springframework.data.domain.Pageable
@@ -20,4 +21,7 @@ interface DataJpaWaitingQueueRepository : JpaRepository<WaitingQueueJpaEntity, L
         active: QueueStatus,
         now: LocalDateTime,
     ): List<WaitingQueueJpaEntity>
+
+    fun findByTokenAndStatus(token: String, status: QueueStatus): WaitingQueueJpaEntity?
+
 }
