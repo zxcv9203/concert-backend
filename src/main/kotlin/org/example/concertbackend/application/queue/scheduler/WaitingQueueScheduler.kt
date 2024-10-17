@@ -20,4 +20,15 @@ class WaitingQueueScheduler(
                 waitingQueueManager.update(it)
             }
     }
+
+    @Scheduled(fixedRate = 60000)
+    fun expireWaitingTokens() {
+        val now = timeProvider.now()
+        waitingQueueManager
+            .findExpiredTokens(now)
+            .forEach {
+                it.expire(now)
+                waitingQueueManager.update(it)
+            }
+    }
 }

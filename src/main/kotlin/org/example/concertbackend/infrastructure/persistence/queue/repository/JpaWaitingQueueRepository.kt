@@ -9,6 +9,7 @@ import org.example.concertbackend.infrastructure.persistence.queue.mapper.toDoma
 import org.example.concertbackend.infrastructure.persistence.queue.mapper.toJpaEntity
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class JpaWaitingQueueRepository(
@@ -45,5 +46,11 @@ class JpaWaitingQueueRepository(
     override fun update(queueToken: WaitingQueue) {
         dataJpaWaitingQueueRepository
             .save(queueToken.toJpaEntity())
+    }
+
+    override fun findExpiredTokens(now: LocalDateTime): List<WaitingQueue> {
+        return dataJpaWaitingQueueRepository
+            .findAllByStatusAndExpiresAtBefore(QueueStatus.ACTIVE, now)
+            .map { it.toDomain() }
     }
 }

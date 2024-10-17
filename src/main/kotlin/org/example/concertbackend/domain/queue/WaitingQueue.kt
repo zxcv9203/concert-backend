@@ -12,4 +12,10 @@ class WaitingQueue(
         this.status = QueueStatus.ACTIVE
         this.expiresAt = expiresAt.plusMinutes(5)
     }
+
+    fun expire(now: LocalDateTime) {
+        if (now > expiresAt) {
+            this.status = QueueStatus.EXPIRED
+        }
+    }
 }

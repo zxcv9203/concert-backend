@@ -1,5 +1,7 @@
 package org.example.concertbackend.domain.queue
 
+import java.time.LocalDateTime
+
 interface WaitingQueueManager {
     fun addToQueue(queueToken: WaitingQueue): WaitingQueue
 
@@ -13,4 +15,6 @@ interface WaitingQueueManager {
     ): List<WaitingQueue>
 
     fun update(queueToken: WaitingQueue)
+
+    fun findExpiredTokens(now: LocalDateTime): List<WaitingQueue>
 }
