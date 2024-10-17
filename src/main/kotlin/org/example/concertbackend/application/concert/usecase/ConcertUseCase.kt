@@ -2,6 +2,8 @@ package org.example.concertbackend.application.concert.usecase
 
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponse
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
+import org.example.concertbackend.api.concert.response.ConcertSeatResponses
+import org.example.concertbackend.application.concert.mapper.toResponse
 import org.example.concertbackend.application.concert.service.ConcertQueryService
 import org.example.concertbackend.application.concert.service.ConcertScheduleQueryService
 import org.example.concertbackend.application.concert.service.ConcertSeatQueryService
@@ -32,5 +34,21 @@ class ConcertUseCase(
                     availableSeats = concertSeatQueryService.countAvailableSeats(schedule.id),
                 )
             }.let { ConcertScheduleResponses(it) }
+    }
+
+    fun findSeats(
+        concertId: Long,
+        scheduleId: Long,
+        token: String,
+    ): ConcertSeatResponses {
+        waitingQueueManager.checkActiveToken(token)
+
+        concertQueryService.getById(concertId)
+        concertScheduleQueryService.getByConcertIdAndId(scheduleId, concertId)
+
+        return concertSeatQueryService
+            .findAllByScheduleId(scheduleId)
+            .map { it.toResponse() }
+            .let { ConcertSeatResponses(it) }
     }
 }

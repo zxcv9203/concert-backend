@@ -9,4 +9,6 @@ interface DataJpaConcertSeatRepository : JpaRepository<ConcertSeatJpaEntity, Lon
         status: ConcertSeatStatus,
         concertScheduleId: Long,
     ): Int
+
+    fun findAllByConcertScheduleId(scheduleId: Long): List<ConcertSeatJpaEntity>
 }
