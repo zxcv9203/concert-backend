@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository
 class JpaUserRepository(
     private val dataJpaUserRepository: DataJpaUserRepository,
 ) : UserRepository {
-    override fun findByIdOrNull(id: Long): User? = dataJpaUserRepository.findByIdOrNull(id)?.toDomain()
+    override fun findById(id: Long): User? = dataJpaUserRepository.findByIdOrNull(id)?.toDomain()
 }

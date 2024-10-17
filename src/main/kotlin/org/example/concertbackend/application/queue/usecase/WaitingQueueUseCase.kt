@@ -19,7 +19,7 @@ class WaitingQueueUseCase(
     private val waitingQueueQueryService: WaitingQueueQueryService,
 ) {
     fun addToQueue(request: RegisterQueueRequest): RegisterQueueResponse {
-        userQueryService.findById(request.userId)
+        userQueryService.getById(request.userId)
         val waitingQueueInToken =
             queueTokenQueryService.findByUserId(request.userId)
                 ?: queueTokenCommandService
