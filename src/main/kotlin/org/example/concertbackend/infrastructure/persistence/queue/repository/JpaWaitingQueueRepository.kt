@@ -53,4 +53,9 @@ class JpaWaitingQueueRepository(
             .findAllByStatusAndExpiresAtBefore(QueueStatus.ACTIVE, now)
             .map { it.toDomain() }
     }
+
+    override fun checkActiveToken(token: String) {
+        dataJpaWaitingQueueRepository.findByTokenAndStatus(token, QueueStatus.ACTIVE)
+            ?: throw BusinessException(ErrorType.NOT_ACTIVE_TOKEN)
+    }
 }

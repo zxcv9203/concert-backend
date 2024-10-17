@@ -17,4 +17,6 @@ interface WaitingQueueManager {
     fun update(queueToken: WaitingQueue)
 
     fun findExpiredTokens(now: LocalDateTime): List<WaitingQueue>
+
+    fun checkActiveToken(token: String)
 }
