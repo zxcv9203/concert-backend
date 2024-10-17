@@ -1,0 +1,6 @@
+package org.example.concertbackend.infrastructure.persistence.concert.reservation.repository
+
+import org.example.concertbackend.infrastructure.persistence.concert.reservation.entity.ConcertReservationJpaEntity
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface DataJpaConcertReservationRepository : JpaRepository<ConcertReservationJpaEntity, Long>

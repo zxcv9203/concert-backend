@@ -8,8 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponse
 import org.example.concertbackend.api.concert.response.ConcertScheduleResponses
 import org.example.concertbackend.application.concert.service.ConcertQueryService
+import org.example.concertbackend.application.concert.service.ConcertReservationCommandService
 import org.example.concertbackend.application.concert.service.ConcertScheduleQueryService
 import org.example.concertbackend.application.concert.service.ConcertSeatQueryService
+import org.example.concertbackend.application.queue.service.QueueTokenQueryService
 import org.example.concertbackend.domain.concert.Concert
 import org.example.concertbackend.domain.concert.ConcertSchedule
 import org.example.concertbackend.domain.queue.WaitingQueueManager
@@ -35,6 +37,12 @@ class ConcertUseCaseTest {
 
     @MockK
     private lateinit var concertSeatQueryService: ConcertSeatQueryService
+
+    @MockK
+    private lateinit var concertReservationCommandService: ConcertReservationCommandService
+
+    @MockK
+    private lateinit var queueTokenQueryService: QueueTokenQueryService
 
     @Nested
     @DisplayName("콘서트 일정 조회")

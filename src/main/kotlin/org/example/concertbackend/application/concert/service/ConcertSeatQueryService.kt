@@ -11,4 +11,5 @@ class ConcertSeatQueryService(
     fun countAvailableSeats(concertScheduleId: Long): Int = concertSeatRepository.countAvailableSeats(concertScheduleId)
 
     fun findAllByScheduleId(scheduleId: Long): List<ConcertSeat> = concertSeatRepository.findAllByScheduleId(scheduleId)
+
 }

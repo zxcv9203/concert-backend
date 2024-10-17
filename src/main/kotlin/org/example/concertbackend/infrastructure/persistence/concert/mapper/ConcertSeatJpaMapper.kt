@@ -6,6 +6,16 @@ import org.example.concertbackend.infrastructure.persistence.concert.entity.Conc
 fun ConcertSeatJpaEntity.toDomain() =
     ConcertSeat(
         id = id,
+        concertScheduleId = concertScheduleId,
+        name = name,
+        status = status,
+        price = price,
+    )
+
+fun ConcertSeat.toJpaEntity() =
+    ConcertSeatJpaEntity(
+        id = id,
+        concertScheduleId = concertScheduleId,
         name = name,
         status = status,
         price = price,

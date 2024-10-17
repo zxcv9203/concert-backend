@@ -31,14 +31,13 @@ CREATE TABLE IF NOT EXISTS `concert_seats`
 
 CREATE TABLE IF NOT EXISTS `concert_reservations`
 (
-    `id`                  BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `concert_schedule_id` BIGINT      NOT NULL COMMENT '콘서트 스케줄 ID',
-    `concert_seat_id`     BIGINT      NOT NULL COMMENT '콘서트 좌석 ID',
-    `total_price`         BIGINT      NOT NULL COMMENT '총 가격',
-    `status`              VARCHAR(30) NOT NULL COMMENT '예약 상태',
-    `expires_at`          DATETIME    NOT NULL COMMENT '예약 만료 시간',
-    `created_at`          DATETIME    NOT NULL COMMENT '생성 시간',
-    `updated_at`          DATETIME    NOT NULL COMMENT '수정 시간'
+    `id`          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id`     BIGINT      NOT NULL COMMENT '사용자 ID',
+    `total_price` BIGINT      NOT NULL COMMENT '총 가격',
+    `status`      VARCHAR(30) NOT NULL COMMENT '예약 상태',
+    `expires_at`  DATETIME    NOT NULL COMMENT '예약 만료 시간',
+    `created_at`  DATETIME    NOT NULL COMMENT '생성 시간',
+    `updated_at`  DATETIME    NOT NULL COMMENT '수정 시간'
 );
 
 CREATE TABLE IF NOT EXISTS `concert_reservation_items`
