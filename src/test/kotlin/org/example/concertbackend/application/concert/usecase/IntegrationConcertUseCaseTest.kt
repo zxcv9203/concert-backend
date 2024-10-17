@@ -1,0 +1,142 @@
+package org.example.concertbackend.application.concert.usecase
+
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.example.concertbackend.common.exception.BusinessException
+import org.example.concertbackend.common.model.ErrorType
+import org.example.concertbackend.domain.queue.QueueStatus
+import org.example.concertbackend.helper.DatabaseCleanUp
+import org.example.concertbackend.infrastructure.persistence.concert.entity.ConcertJpaEntity
+import org.example.concertbackend.infrastructure.persistence.concert.entity.ConcertScheduleJpaEntity
+import org.example.concertbackend.infrastructure.persistence.concert.entity.ConcertSeatJpaEntity
+import org.example.concertbackend.infrastructure.persistence.concert.repository.DataJpaConcertRepository
+import org.example.concertbackend.infrastructure.persistence.concert.repository.DataJpaConcertScheduleRepository
+import org.example.concertbackend.infrastructure.persistence.concert.repository.DataJpaConcertSeatRepository
+import org.example.concertbackend.infrastructure.persistence.queue.entity.QueueTokenJpaEntity
+import org.example.concertbackend.infrastructure.persistence.queue.entity.WaitingQueueJpaEntity
+import org.example.concertbackend.infrastructure.persistence.queue.repository.DataJpaQueueTokenRepository
+import org.example.concertbackend.infrastructure.persistence.queue.repository.DataJpaWaitingQueueRepository
+import org.example.concertbackend.infrastructure.persistence.user.entity.UserJpaEntity
+import org.example.concertbackend.infrastructure.persistence.user.repository.DataJpaUserRepository
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import java.time.LocalDateTime
+import kotlin.test.Test
+
+@SpringBootTest
+class IntegrationConcertUseCaseTest {
+    @Autowired
+    private lateinit var concertUseCase: ConcertUseCase
+
+    @Autowired
+    private lateinit var dataJpaConcertRepository: DataJpaConcertRepository
+
+    @Autowired
+    private lateinit var dataJpaConcertScheduleRepository: DataJpaConcertScheduleRepository
+
+    @Autowired
+    private lateinit var dataJpaConcertSeatRepository: DataJpaConcertSeatRepository
+
+    @Autowired
+    private lateinit var dataJpaWaitingQueueRepository: DataJpaWaitingQueueRepository
+
+    @Autowired
+    private lateinit var dataJpaUserRepository: DataJpaUserRepository
+
+    @Autowired
+    private lateinit var dataJpaQueueTokenRepository: DataJpaQueueTokenRepository
+
+
+    @Autowired
+    private lateinit var databaseCleanUp: DatabaseCleanUp
+
+    @AfterEach
+    fun setUp() {
+        databaseCleanUp.execute()
+    }
+
+    @Nested
+    @DisplayName("콘서트 일정 조회")
+    inner class FindSchedules {
+        private val concertDate1 = LocalDateTime.now().plusDays(1)
+        private val concertDate2 = LocalDateTime.now().plusDays(2)
+        private lateinit var concert: ConcertJpaEntity
+
+        @BeforeEach
+        fun setUp() {
+            val user = dataJpaUserRepository.save(UserJpaEntity("user"))
+            val queueToken = dataJpaQueueTokenRepository.save(QueueTokenJpaEntity(userId = user.id, token = "token"))
+            dataJpaWaitingQueueRepository.save(
+                WaitingQueueJpaEntity(
+                    queueToken.token,
+                    status = QueueStatus.ACTIVE,
+                    expiresAt = concertDate1,
+                ),
+            )
+            concert = dataJpaConcertRepository.save(ConcertJpaEntity("concert"))
+            val concertSchedules =
+                dataJpaConcertScheduleRepository.saveAll(
+                    listOf(
+                        ConcertScheduleJpaEntity(
+                            concertId = concert.id,
+                            startTime = concertDate1,
+                            endTime = concertDate1.plusHours(2),
+                        ),
+                        ConcertScheduleJpaEntity(
+                            concertId = concert.id,
+                            startTime = concertDate2,
+                            endTime = concertDate2.plusHours(2),
+                        ),
+                    ),
+                )
+            dataJpaConcertSeatRepository.saveAll(
+                concertSchedules.flatMap { schedule ->
+                    (1..50).map {
+                        ConcertSeatJpaEntity(
+                            concertScheduleId = schedule.id,
+                            name = "A1",
+                            price = 10000,
+                        )
+                    }
+                },
+            )
+        }
+
+        @Test
+        @DisplayName("콘서트 ID를 전달하면 해당 콘서트의 일정을 반환한다.")
+        fun findSchedules() {
+            println(concert.id)
+            val concertId = concert.id
+
+            val got = concertUseCase.findSchedules(concertId, "token")
+
+            assertThat(got.schedules)
+                .extracting("date")
+                .contains(concertDate1, concertDate2)
+        }
+
+        @Test
+        @DisplayName("전달된 대기열 토큰이 유효하지 않으면 예외를 던진다.")
+        fun invalidToken() {
+            val concertId = 1L
+
+            assertThatThrownBy { concertUseCase.findSchedules(concertId, "invalidToken") }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.NOT_ACTIVE_TOKEN.message)
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 콘서트 ID를 전달하면 예외를 던진다.")
+        fun notFoundConcert() {
+            val concertId = 999999L
+
+            assertThatThrownBy { concertUseCase.findSchedules(concertId, "token") }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.CONCERT_NOT_FOUND.message)
+        }
+    }
+}
