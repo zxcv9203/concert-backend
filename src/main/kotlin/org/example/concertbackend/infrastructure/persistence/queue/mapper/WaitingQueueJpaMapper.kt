@@ -8,6 +8,7 @@ fun WaitingQueue.toJpaEntity(): WaitingQueueJpaEntity =
         id = id,
         token = token,
         status = status,
+        expiresAt = expiresAt,
     )
 
 fun WaitingQueueJpaEntity.toDomain(): WaitingQueue =
@@ -15,4 +16,5 @@ fun WaitingQueueJpaEntity.toDomain(): WaitingQueue =
         id = id,
         token = token,
         status = status,
+        expiresAt = expiresAt,
     )

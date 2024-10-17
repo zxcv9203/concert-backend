@@ -7,7 +7,6 @@ fun QueueToken.toJpaEntity(): QueueTokenJpaEntity =
     QueueTokenJpaEntity(
         userId = userId,
         token = token,
-        expiresAt = expiresAt,
         id = id,
     )
 
@@ -15,6 +14,5 @@ fun QueueTokenJpaEntity.toDomain(): QueueToken =
     QueueToken(
         userId = userId,
         token = token,
-        expiresAt = expiresAt,
         id = id,
     )

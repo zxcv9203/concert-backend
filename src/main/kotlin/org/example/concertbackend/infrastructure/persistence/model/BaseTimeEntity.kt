@@ -1,5 +1,6 @@
 package org.example.concertbackend.infrastructure.persistence.model
 
+import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.annotation.CreatedDate
@@ -11,6 +12,7 @@ import java.time.LocalDateTime
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseTimeEntity {
     @CreatedDate
+    @Column(updatable = false)
     var createdAt: LocalDateTime = LocalDateTime.MIN
         private set
 
