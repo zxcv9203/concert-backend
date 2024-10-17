@@ -12,4 +12,8 @@ class ConcertReservation(
     fun expire() {
         status = ConcertReservationStatus.CANCEL
     }
+
+    fun confirm() {
+        status = ConcertReservationStatus.CONFIRMED
+    }
 }

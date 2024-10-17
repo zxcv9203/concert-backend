@@ -28,6 +28,9 @@ class ConcertReservationCommandServiceTest {
     private lateinit var concertReservationCommandService: ConcertReservationCommandService
 
     @MockK
+    private lateinit var concertReservationQueryService: ConcertReservationQueryService
+
+    @MockK
     private lateinit var timeProvider: TimeProvider
 
     @MockK

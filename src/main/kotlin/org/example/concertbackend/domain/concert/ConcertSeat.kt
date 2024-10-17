@@ -14,4 +14,8 @@ class ConcertSeat(
     fun cancelReservation() {
         this.status = ConcertSeatStatus.AVAILABLE
     }
+
+    fun confirmReservation() {
+        this.status = ConcertSeatStatus.RESERVED
+    }
 }

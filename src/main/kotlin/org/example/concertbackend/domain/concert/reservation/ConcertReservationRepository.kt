@@ -8,4 +8,11 @@ interface ConcertReservationRepository {
     fun findExpiredReservations(now: LocalDateTime): List<ConcertReservation>
 
     fun update(it: ConcertReservation): ConcertReservation
+
+    fun findByIdAndStatus(
+        id: Long,
+        status: ConcertReservationStatus,
+    ): ConcertReservation?
+
+    fun findById(id: Long): ConcertReservation?
 }
