@@ -19,4 +19,9 @@ class JpaWalletRepository(
         dataJpaWalletRepository
             .save(wallet.toJpaEntity())
             .toDomain()
+
+    override fun findByUserId(userId: Long): Wallet? =
+        dataJpaWalletRepository
+            .findByUserId(userId)
+            ?.toDomain()
 }

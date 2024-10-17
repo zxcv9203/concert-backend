@@ -4,4 +4,6 @@ interface WalletRepository {
     fun findByUserIdWithLock(userId: Long): Wallet?
 
     fun update(wallet: Wallet): Wallet
+
+    fun findByUserId(userId: Long): Wallet?
 }
