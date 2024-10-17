@@ -14,4 +14,10 @@ class JpaConcertReservationItemRepository(
         dataJpaConcertReservationItemRepository
             .save(concertReservationItem.toJpaEntity())
             .toDomain()
+
+    override fun findByReservationId(id: Long): List<ConcertReservationItem> {
+        return dataJpaConcertReservationItemRepository
+            .findAllByConcertReservationId(id)
+            .map { it.toDomain() }
+    }
 }

@@ -10,4 +10,8 @@ class ConcertSeat(
     fun reserve() {
         this.status = ConcertSeatStatus.RESERVED_TEMPORARY
     }
+
+    fun cancelReservation() {
+        this.status = ConcertSeatStatus.AVAILABLE
+    }
 }

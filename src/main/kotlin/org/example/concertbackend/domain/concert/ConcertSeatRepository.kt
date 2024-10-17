@@ -11,4 +11,6 @@ interface ConcertSeatRepository {
     ): List<ConcertSeat>
 
     fun update(seat: ConcertSeat): ConcertSeat
+
+    fun findById(seatId: Long): ConcertSeat?
 }

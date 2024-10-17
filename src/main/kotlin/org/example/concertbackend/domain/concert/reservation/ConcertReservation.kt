@@ -6,6 +6,10 @@ class ConcertReservation(
     val userId: Long,
     val totalPrice: Long,
     val expiresAt: LocalDateTime,
-    val status: ConcertReservationStatus = ConcertReservationStatus.PENDING,
+    var status: ConcertReservationStatus = ConcertReservationStatus.PENDING,
     val id: Long = 0,
-)
+) {
+    fun expire() {
+        status = ConcertReservationStatus.CANCEL
+    }
+}
