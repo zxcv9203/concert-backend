@@ -11,12 +11,12 @@ import org.example.concertbackend.domain.wallet.BalanceHistoryType
 import org.example.concertbackend.infrastructure.persistence.model.BaseTimeEntity
 
 @Entity
-@Table(name = "balance_history")
+@Table(name = "balance_histories")
 class BalanceHistoryJpaEntity(
     val walletId: Long,
     val balance: Long,
     @Enumerated(EnumType.STRING)
-    val status: BalanceHistoryType,
+    val type: BalanceHistoryType,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

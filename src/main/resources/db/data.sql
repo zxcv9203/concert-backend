@@ -2,6 +2,9 @@ INSERT INTO users (name, `created_at`, `updated_at`) VALUES ('user1', now(), now
 INSERT INTO users (name, `created_at`, `updated_at`) VALUES ('user2', now(), now());
 INSERT INTO users (name, `created_at`, `updated_at`) VALUES ('user3', now(), now());
 
+INSERT INTO wallets (user_id, balance, `created_at`, `updated_at`) VALUES (1, 0, now(), now());
+INSERT INTO wallets (user_id, balance, `created_at`, `updated_at`) VALUES (2, 0, now(), now());
+INSERT INTO wallets (user_id, balance, `created_at`, `updated_at`) VALUES (3, 0, now(), now());
 INSERT INTO concerts (name, `created_at`, `updated_at`) VALUES ('concert1', now(), now());
 
 INSERT INTO concert_schedules (concert_id, start_time, end_time, max_seat, created_at, updated_at)

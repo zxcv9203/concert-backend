@@ -28,9 +28,9 @@ class UserQueryServiceTest {
         @DisplayName("유저가 존재하지 않는 경우 예외가 발생합니다.")
         fun userNotExists() {
             val userId = 1L
-            every { userRepository.findByIdOrNull(userId) } returns null
+            every { userRepository.findById(userId) } returns null
 
-            assertThatThrownBy { userQueryService.findById(userId) }
+            assertThatThrownBy { userQueryService.getById(userId) }
                 .isInstanceOf(BusinessException::class.java)
                 .hasMessage(ErrorType.USER_NOT_FOUND.message)
         }
