@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `concert_seats`
     `concert_schedule_id` BIGINT      NOT NULL COMMENT '콘서트 스케줄 ID',
     `name`                VARCHAR(20) NOT NULL COMMENT '좌석 이름',
     `status`              VARCHAR(30) NOT NULL COMMENT '좌석 상태',
+    `price`               BIGINT      NOT NULL COMMENT '가격',
     `created_at`          DATETIME    NOT NULL COMMENT '생성 시간',
     `updated_at`          DATETIME    NOT NULL COMMENT '수정 시간'
 );
