@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ConcertReservationCommandService(
+    private val concertReservationQueryService: ConcertReservationQueryService,
     private val timeProvider: TimeProvider,
     private val concertSeatRepository: ConcertSeatRepository,
     private val concertReservationRepository: ConcertReservationRepository,
@@ -44,5 +45,16 @@ class ConcertReservationCommandService(
         }
 
         return reservation
+    }
+
+    fun confirmReservation(id: Long) {
+        val reservation = concertReservationQueryService.getById(id)
+        reservation.confirm()
+        concertReservationRepository.update(reservation)
+        concertReservationItemRepository.findByReservationId(id).forEach { item ->
+            val seat = concertSeatRepository.findById(item.concertSeatId)!!
+            seat.confirmReservation()
+            concertSeatRepository.update(seat)
+        }
     }
 }

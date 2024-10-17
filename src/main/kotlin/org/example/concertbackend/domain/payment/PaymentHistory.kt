@@ -7,6 +7,6 @@ class PaymentHistory(
     val concertReservationId: Long,
     val amount: Long,
     val status: PaymentStatus,
-    val payment_time: LocalDateTime,
+    val paidAt: LocalDateTime,
     val id: Long = 0,
 )

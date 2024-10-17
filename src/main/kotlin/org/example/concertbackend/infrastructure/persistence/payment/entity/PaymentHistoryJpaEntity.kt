@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 @Table(name = "payment_histories")
 class PaymentHistoryJpaEntity(
     val walletId: Long,
-    val concert_reservation_id: Long,
+    val concertReservationId: Long,
     val amount: Long,
     @Enumerated(EnumType.STRING)
     val status: PaymentStatus,

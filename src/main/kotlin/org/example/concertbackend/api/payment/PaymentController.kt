@@ -1,7 +1,7 @@
 package org.example.concertbackend.api.payment
 
 import org.example.concertbackend.api.payment.request.PaymentRequest
-import org.example.concertbackend.api.payment.response.PaymentResponse
+import org.example.concertbackend.application.payment.usecase.PaymentUseCase
 import org.example.concertbackend.common.model.ApiResponse
 import org.example.concertbackend.common.model.SuccessType
 import org.springframework.http.HttpStatus
@@ -14,13 +14,18 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/payments")
-class PaymentController {
+class PaymentController(
+    private val paymentUseCase: PaymentUseCase,
+) : PaymentApi {
     @PostMapping
-    fun pay(
+    override fun pay(
         @RequestHeader("QUEUE-AUTH-TOKEN") token: String,
         @RequestBody request: PaymentRequest,
-    ): ResponseEntity<ApiResponse<PaymentResponse>> =
-        ResponseEntity
+    ): ResponseEntity<ApiResponse<Unit>> {
+        paymentUseCase.pay(token, request)
+
+        return ResponseEntity
             .status(HttpStatus.OK)
-            .body(ApiResponse.success(SuccessType.PAYMENT_SUCCESS, PaymentResponse(0)))
+            .body(ApiResponse.success(SuccessType.PAYMENT_SUCCESS))
+    }
 }
