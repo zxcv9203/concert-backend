@@ -194,8 +194,50 @@ class IntegrationConcertUseCaseTest {
                 .isInstanceOf(BusinessException::class.java)
                 .hasMessage(ErrorType.CONCERT_SCHEDULE_NOT_FOUND.message)
         }
-
     }
 
+    @Nested
+    @DisplayName("콘서트 좌석 예약")
+    inner class ReserveSeats {
+
+        @Test
+        @DisplayName("좌석 아이디 리스트가 주어지면 해당 하는 좌석들을 예약한다.")
+        fun reserveSeats() {
+            val concertId = 1L
+            val concertScheduleId = 1L
+            val token = "token"
+        }
+
+        @Test
+        @DisplayName("동시에 여러 사용자가 좌석 예약을 시도하는 경우 한명만 좌석 예약에 성공한다.")
+        fun concurrencyReserveSeats() {
+
+        }
+        @Test
+        @DisplayName("전달된 대기열 토큰이 유효하지 않으면 예외를 던진다.")
+        fun invalidToken() {
+
+        }
+
+        @Test
+        @DisplayName("전달된 콘서트 ID가 존재하지 않으면 예외를 던진다.")
+        fun notFoundConcert() {}
+
+        @Test
+        @DisplayName("전달된 콘서트 스케줄 ID가 존재하지 않으면 예외를 던진다.")
+        fun notFoundConcertSchedule() {}
+
+        @Test
+        @DisplayName("대기열 토큰 정보가 존재하지 않는 경우 예외를 던진다.")
+        fun notFoundToken() {
+
+        }
+
+        @Test
+        @DisplayName("예약 요청 Id리스트와 예약 가능한 좌석 Id 리스트의 수가 다르면 예외를 던진다.")
+        fun compareSeat() {
+
+        }
+    }
 
 }
