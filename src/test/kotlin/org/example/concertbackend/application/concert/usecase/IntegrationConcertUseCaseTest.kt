@@ -2,9 +2,11 @@ package org.example.concertbackend.application.concert.usecase
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.example.concertbackend.api.concert.request.ReservationConcertSeatRequest
 import org.example.concertbackend.common.exception.BusinessException
 import org.example.concertbackend.common.model.ErrorType
 import org.example.concertbackend.domain.queue.QueueStatus
+import org.example.concertbackend.helper.ConcurrentTestHelper
 import org.example.concertbackend.helper.DatabaseCleanUp
 import org.example.concertbackend.infrastructure.persistence.concert.entity.ConcertJpaEntity
 import org.example.concertbackend.infrastructure.persistence.concert.entity.ConcertScheduleJpaEntity
@@ -49,7 +51,6 @@ class IntegrationConcertUseCaseTest {
 
     @Autowired
     private lateinit var dataJpaQueueTokenRepository: DataJpaQueueTokenRepository
-
 
     @Autowired
     private lateinit var databaseCleanUp: DatabaseCleanUp
@@ -106,8 +107,6 @@ class IntegrationConcertUseCaseTest {
     @Nested
     @DisplayName("콘서트 일정 조회")
     inner class FindSchedules {
-
-
         @Test
         @DisplayName("콘서트 ID를 전달하면 해당 콘서트의 일정을 반환한다.")
         fun findSchedules() {
@@ -199,45 +198,80 @@ class IntegrationConcertUseCaseTest {
     @Nested
     @DisplayName("콘서트 좌석 예약")
     inner class ReserveSeats {
+        private val concertId = 1L
+        private val concertScheduleId = 1L
+        private val token = "token"
+
+        private val request =
+            ReservationConcertSeatRequest(
+                seats = listOf(1L, 2L, 3L),
+            )
 
         @Test
         @DisplayName("좌석 아이디 리스트가 주어지면 해당 하는 좌석들을 예약한다.")
         fun reserveSeats() {
-            val concertId = 1L
-            val concertScheduleId = 1L
-            val token = "token"
+            val got = concertUseCase.reserveSeats(concertId, concertScheduleId, token, request)
+
+            assertThat(got.id).isEqualTo(1)
+            assertThat(got.totalPrice).isEqualTo(30000)
         }
 
         @Test
         @DisplayName("동시에 여러 사용자가 좌석 예약을 시도하는 경우 한명만 좌석 예약에 성공한다.")
         fun concurrencyReserveSeats() {
+            val results =
+                ConcurrentTestHelper.executeAsyncTasks(50) {
+                    concertUseCase.reserveSeats(concertId, concertScheduleId, token, request)
+                }
 
+            val successCount = results.count { it }
+            val failCount = results.count { !it }
+
+            assertThat(successCount).isEqualTo(1)
+            assertThat(failCount).isEqualTo(49)
         }
+
         @Test
         @DisplayName("전달된 대기열 토큰이 유효하지 않으면 예외를 던진다.")
         fun invalidToken() {
+            val invalidToken = "invalidToken"
 
+            assertThatThrownBy { concertUseCase.reserveSeats(concertId, concertScheduleId, invalidToken, request) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.NOT_ACTIVE_TOKEN.message)
         }
 
         @Test
         @DisplayName("전달된 콘서트 ID가 존재하지 않으면 예외를 던진다.")
-        fun notFoundConcert() {}
+        fun notFoundConcert() {
+            val concertId = 9999L
+
+            assertThatThrownBy { concertUseCase.reserveSeats(concertId, concertScheduleId, token, request) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.CONCERT_NOT_FOUND.message)
+        }
 
         @Test
         @DisplayName("전달된 콘서트 스케줄 ID가 존재하지 않으면 예외를 던진다.")
-        fun notFoundConcertSchedule() {}
+        fun notFoundConcertSchedule() {
+            val concertScheduleId = 9999L
 
-        @Test
-        @DisplayName("대기열 토큰 정보가 존재하지 않는 경우 예외를 던진다.")
-        fun notFoundToken() {
-
+            assertThatThrownBy { concertUseCase.reserveSeats(concertId, concertScheduleId, token, request) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.CONCERT_SCHEDULE_NOT_FOUND.message)
         }
 
         @Test
         @DisplayName("예약 요청 Id리스트와 예약 가능한 좌석 Id 리스트의 수가 다르면 예외를 던진다.")
         fun compareSeat() {
+            val request =
+                ReservationConcertSeatRequest(
+                    seats = listOf(1L, 2L, 3L, 999L),
+                )
 
+            assertThatThrownBy { concertUseCase.reserveSeats(concertId, concertScheduleId, token, request) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage(ErrorType.ALREADY_RESERVED.message)
         }
     }
-
 }
